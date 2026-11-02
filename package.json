@@ -1,0 +1,16 @@
+{
+  "name": "focuslog",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "typecheck": "pnpm -r typecheck",
+    "dev:web": "pnpm -F @focuslog/web dev",
+    "dev:api": "pnpm -F @focuslog/api dev"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
