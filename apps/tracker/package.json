@@ -1,0 +1,12 @@
+{
+  "name": "@focuslog/tracker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "get-windows": "^10.0.0"
+  }
+}
