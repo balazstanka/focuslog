@@ -6,10 +6,13 @@
     "dev": "pnpm -r --parallel dev",
     "typecheck": "pnpm -r typecheck",
     "dev:web": "pnpm -F @focuslog/web dev",
-    "dev:api": "pnpm -F @focuslog/api dev"
+    "dev:api": "pnpm -F @focuslog/api dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
