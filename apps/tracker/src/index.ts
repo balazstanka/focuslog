@@ -1,9 +1,5 @@
 import { activeWindow } from 'get-windows';
-
-type WindowSample = {
-    title: string;
-    name: string;
-};
+import type { WindowSample } from "@focuslog/shared";
 
 const API_URL = process.env.API_URL ?? 'http://localhost:3001/samples';
 const maxJob = 15;
