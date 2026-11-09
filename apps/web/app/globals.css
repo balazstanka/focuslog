@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eeead7;
+  --foreground: #2d0000;
+  --muted: #5f675a;
+  --surface: #f8f5e8;
+  --input: #fffdf5;
+  --border: rgb(45 0 0 / 0.14);
+  --glow: rgb(109 8 8 / 0.08);
+  --shadow: rgb(45 0 0 / 0.12);
+  --accent: #6d0808;
+  --accent-hover: #2d0000;
+  --on-accent: #eeead7;
+  --highlight: #6d0808;
+  --focus: #6d0808;
+  --focus-ring: rgb(109 8 8 / 0.15);
 }
 
 @theme inline {
@@ -12,15 +24,64 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background:
+    radial-gradient(60rem 36rem at 50% -8rem, var(--glow), transparent), var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
 }
 
-body {
-  background: var(--background);
+main > .rounded-2xl {
+  padding: 2.5rem;
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 24px 60px var(--shadow);
+}
+
+form h1 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+form label {
+  color: var(--muted);
+}
+
+form input {
+  background: var(--input);
+  border-color: var(--border);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+form input:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+button[type="submit"] {
+  margin-top: 0.25rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  transition: background 150ms;
+}
+
+button[type="submit"]:hover {
+  background: var(--accent-hover);
+}
+
+[aria-current="page"] {
+  border-bottom-color: var(--highlight);
+}
+
+form p:last-child {
+  color: var(--muted);
+}
+
+a.underline {
+  color: var(--foreground);
+  text-decoration-color: var(--highlight);
+  text-underline-offset: 3px;
 }
