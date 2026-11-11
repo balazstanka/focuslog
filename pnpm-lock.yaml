@@ -75,9 +75,15 @@ importers:
       '@focuslog/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      dotenv:
+        specifier: ^18.0.9
+        version: 18.0.9
       get-windows:
         specifier: ^10.0.0
         version: 10.0.0(supports-color@7.2.0)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
 
   apps/web:
     dependencies:

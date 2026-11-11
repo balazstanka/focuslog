@@ -7,6 +7,7 @@
     "typecheck": "pnpm -r typecheck",
     "dev:web": "pnpm -F @focuslog/web dev",
     "dev:api": "pnpm -F @focuslog/api dev",
+    "dev:tracker": "pnpm -F @focuslog/tracker dev",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
