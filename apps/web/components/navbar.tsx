@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [{ href: "/dashboard", label: "Dashboard" }];
 
@@ -17,8 +20,8 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-10 z-50 mt-10 mb-3 flex justify-center px-4">
-      <nav className="flex w-full max-w-5xl items-center justify-between border-b border-foreground/10 bg-background/80 p-4 backdrop-blur-md">
+    <header className="sticky top-2 z-50 flex justify-center px-4">
+      <nav className="flex w-full max-w-5xl items-center justify-between border-b rounded-lg border-border bg-background/80 p-4 backdrop-blur-md">
         <div className="flex items-center gap-8">
           <span className="font-semibold text-xl">Focuslog</span>
           <ul className="flex items-center gap-6">
@@ -27,9 +30,12 @@ export function Navbar() {
                 <Link
                   href={item.href}
                   aria-current={pathname === item.href ? "page" : undefined}
-                  className={`block border-b-2 py-1 text-xl ${
-                    pathname === item.href ? "border-foreground" : "border-transparent"
-                  }`}
+                  className={cn(
+                    "block border-b-2 py-1 text-xl transition-colors",
+                    pathname === item.href
+                      ? "border-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground",
+                  )}
                 >
                   {item.label}
                 </Link>
@@ -37,9 +43,12 @@ export function Navbar() {
             ))}
           </ul>
         </div>
-        <button type="button" onClick={logOut} className="cursor-pointer py-1 text-sm">
-          Logout
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button type="button" variant="ghost" size="sm" onClick={logOut}>
+            Logout
+          </Button>
+        </div>
       </nav>
     </header>
   );

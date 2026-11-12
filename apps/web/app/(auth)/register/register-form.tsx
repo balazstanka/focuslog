@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { FormField } from "@/components/form-field";
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export function RegisterForm() {
@@ -27,7 +28,7 @@ export function RegisterForm() {
 
   return (
     <form action={submitRegistration} className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">Sign up</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Sign up</h1>
       <FormField label="Name" name="name" autoComplete="name" />
       <FormField label="Email" name="email" type="email" autoComplete="email" />
       <FormField
@@ -37,17 +38,16 @@ export function RegisterForm() {
         autoComplete="new-password"
         minLength={8}
       />
-      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
-      <button
-        type="submit"
-        disabled={isPending}
-        className="cursor-pointer rounded-lg bg-foreground py-2 font-medium text-background disabled:opacity-50"
-      >
+      {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
+      <Button type="submit" disabled={isPending} className="mt-1">
         Sign up
-      </button>
-      <p className="text-center text-sm">
+      </Button>
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="underline">
+        <Link
+          href="/login"
+          className="text-foreground underline decoration-primary underline-offset-3"
+        >
           Log in
         </Link>
       </p>
