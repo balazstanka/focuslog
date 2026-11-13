@@ -1,7 +1,8 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import { env } from "./lib/env";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+const API_URL = env.API_URL;
 
 const nextConfig: NextConfig = {
   async rewrites() {

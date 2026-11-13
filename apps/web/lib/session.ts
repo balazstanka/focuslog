@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { env } from "./env";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+const API_URL = env.API_URL;
 
 type Session = {
   user: { name: string };

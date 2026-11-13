@@ -21,7 +21,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-2 z-50 flex justify-center px-4">
-      <nav className="flex w-full max-w-5xl items-center justify-between border-b rounded-lg border-border bg-background/80 p-4 backdrop-blur-md">
+      <nav className="flex w-full max-w-5xl items-center justify-between border-b rounded-lg border-border bg-background/80 p-4 backdrop-blur-sm">
         <div className="flex items-center gap-8">
           <span className="font-semibold text-xl">Focuslog</span>
           <ul className="flex items-center gap-6">

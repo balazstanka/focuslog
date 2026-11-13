@@ -1,6 +1,8 @@
 import { Suspense } from "react";
+import { env } from "@/lib/env";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+const API_URL = env.API_URL;
+
 
 type HealthStatus = { ok: boolean; protocol: number };
 
