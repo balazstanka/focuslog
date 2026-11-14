@@ -2,11 +2,9 @@ import path from "node:path";
 import type { NextConfig } from "next";
 import { env } from "./lib/env";
 
-const API_URL = env.API_URL;
-
 const nextConfig: NextConfig = {
   async rewrites() {
-    return [{ source: "/api/:path*", destination: `${API_URL}/api/:path*` }];
+    return [{ source: "/api/:path*", destination: `${env.API_URL}/api/:path*` }];
   },
   experimental: {
     agentFeedback: true,

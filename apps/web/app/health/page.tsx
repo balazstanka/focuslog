@@ -1,9 +1,6 @@
 import { Suspense } from "react";
 import { env } from "@/lib/env";
 
-const API_URL = env.API_URL;
-
-
 type HealthStatus = { ok: boolean; protocol: number };
 
 export default function HealthPage() {
@@ -29,7 +26,7 @@ async function BackendHealth() {
 
 async function fetchBackendHealth(): Promise<HealthStatus | null> {
   try {
-    const response = await fetch(`${API_URL}/health`);
+    const response = await fetch(`${env.API_URL}/health`);
     const res = await response.json();
 
     if (res.ok) {

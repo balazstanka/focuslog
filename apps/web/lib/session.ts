@@ -2,15 +2,13 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "./env";
 
-const API_URL = env.API_URL;
-
 type Session = {
   user: { name: string };
 };
 
 export async function getSession(): Promise<Session | null> {
   const cookieStore = await cookies();
-  const response = await fetch(`${API_URL}/api/auth/get-session`, {
+  const response = await fetch(`${env.API_URL}/api/auth/get-session`, {
     headers: { cookie: cookieStore.toString() },
     cache: "no-store",
   });
