@@ -6,9 +6,10 @@ import { auth } from "./auth/auth";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { UsersModule } from "./users/users.module";
+import { SessionsModule } from "./sessions/sessions.module";
 
 @Module({
-  imports: [PrismaModule, AuthModule.forRoot({ auth }), HealthModule, UsersModule],
+  imports: [PrismaModule, AuthModule.forRoot({ auth }), HealthModule, UsersModule, SessionsModule],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },
     { provide: APP_INTERCEPTOR, useClass: ZodSerializerInterceptor },
