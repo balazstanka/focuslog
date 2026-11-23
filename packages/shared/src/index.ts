@@ -2,6 +2,21 @@ import { z } from "zod";
 
 export const PROTOCOL_VERSION = 1;
 
+export const HealthResponseSchema = z.object({
+  ok: z.boolean(),
+  protocol: z.number().int().positive(),
+});
+
+export const CurrentUserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.email(),
+});
+
+export type HealthResponse = z.infer<typeof HealthResponseSchema>;
+
+export type CurrentUser = z.infer<typeof CurrentUserSchema>;
+
 export const WindowSampleSchema = z.object({
   title: z.string().min(1).max(1024),
   name: z.string().min(1).max(256),

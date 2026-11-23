@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { z } from "zod";
+import { DatabaseEnvSchema } from "./database-env";
 
-const EnvSchema = z.object({
+const EnvSchema = DatabaseEnvSchema.extend({
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
-  DATABASE_URL: z.string(),
   PORT: z.coerce.number().default(3001),
 });
 

@@ -1,11 +1,31 @@
 ---
 name: prisma-database
-description: Data model and portability rules for Focuslog's Prisma database. Use when editing apps/api/prisma/schema.prisma, creating a migration, writing Prisma queries, or moving from SQLite to Postgres or MySQL.
+description: Data model and portability rules for Focuslog's Prisma database. Use when editing apps/api/prisma/schema, creating a migration, writing Prisma queries, or switching between SQLite and Postgres.
 ---
 
 # Prisma database
 
-The schema is `apps/api/prisma/schema.prisma`. Run `pnpm -F @focuslog/api db:migrate` after changing it. The client is generated into `apps/api/src/generated/prisma`.
+The models are in `apps/api/prisma/schema/models.prisma`. The client is generated into `apps/api/src/generated/prisma` and is gitignored, so run `pnpm -F @focuslog/api db:generate` after switching providers.
+
+## Choosing the database
+
+`DATABASE_PROVIDER` in `apps/api/.env` picks the database: `sqlite` (default) or `postgresql`. `DATABASE_URL` must match it.
+
+- Prisma does not accept `env()` in `datasource.provider`, so `prisma.config.ts` writes `prisma/schema/datasource.prisma` before every Prisma CLI command. That file is gitignored, so never edit it.
+- Each provider has its own migration folder: `prisma/migrations/sqlite` and `prisma/migrations/postgresql`. `prisma.config.ts` picks one from `DATABASE_PROVIDER`.
+- At runtime, `src/prisma/prisma-client.ts` chooses the driver adapter (`PrismaBetterSqlite3` or `PrismaPg`), and `src/auth/auth.ts` passes the same provider to better-auth's `prismaAdapter`.
+
+## Changing the schema
+
+1. Edit `models.prisma`.
+2. With `DATABASE_PROVIDER=sqlite`, run `pnpm -F @focuslog/api db:migrate --name <name>`.
+3. Start a Postgres, for example with Docker. Then, with `DATABASE_PROVIDER=postgresql` and its `DATABASE_URL`, run `db:migrate --name <name>` again. This creates the matching migration in `prisma/migrations/postgresql`.
+4. Commit both migrations together.
+5. Switch back to your provider and run `db:generate`.
+
+The first Postgres migration was created without a database: `prisma migrate diff --from-empty --to-schema prisma/schema --script`.
+
+Apply migrations on a new database with `pnpm -F @focuslog/api db:deploy`.
 
 better-auth owns the `user`, `session`, `account` and `verification` tables through its Prisma adapter. The model named `Session` is the auth session; timer sessions are `FocusSession`.
 
@@ -26,9 +46,8 @@ better-auth owns the `user`, `session`, `account` and `verification` tables thro
 - **Idempotent insert:** `createMany({ skipDuplicates: true })` is not supported on SQLite. Query the existing ids and insert only the missing rows, in one transaction.
 - **One active session per user:** a user has at most one `running` or `paused` session. A portable Prisma schema cannot express a partial unique index, so check and create in one transaction in the service code.
 
-## Moving to Postgres or MySQL
+## Adding MySQL later
 
-1. Change `datasource.provider` in `schema.prisma`.
-2. Change `provider` in `prismaAdapter` in `apps/api/src/lib/auth.ts`.
-3. Replace the better-sqlite3 driver adapter in `apps/api/src/lib/prisma.ts` and `apps/api/package.json`.
-4. Regenerate the migrations for the new provider.
+1. Add `mysql` to the `DATABASE_PROVIDER` enum in `apps/api/src/config/database-env.ts`.
+2. Add its driver adapter to `src/prisma/prisma-client.ts` and `apps/api/package.json`.
+3. Create a `prisma/migrations/mysql` folder with a baseline migration (`migrate diff --from-empty`).

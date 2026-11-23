@@ -10,13 +10,13 @@ The tracker records only while the server says the user's timer is running on th
 ## Startup
 
 1. Read the API key from the tracker's config.
-2. Call `POST /tracker/handshake` with `{ protocolVersion, deviceName, platform }` and the key in a header.
+2. Call `POST /api/tracker/handshake` with `{ protocolVersion, deviceName, platform }` and the key in a header.
 3. On 426, stop and ask the user to update the tracker.
 4. Compute the clock offset from `serverTime` and correct every timestamp with it.
 
 ## Heartbeat
 
-Call `POST /tracker/heartbeat` every 10–15 seconds. The `session` in the response controls the tracker:
+Call `POST /api/tracker/heartbeat` every 10–15 seconds. The `session` in the response controls the tracker:
 
 | `session`                       | Action                                               |
 | ------------------------------- | ---------------------------------------------------- |

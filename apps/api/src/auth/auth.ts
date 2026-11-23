@@ -1,10 +1,12 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma";
 import { openAPI } from "better-auth/plugins";
+import { env } from "../config/env";
+import { prisma } from "../prisma/prisma-client";
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, { provider: "sqlite" }),
+  basePath: "/api/auth",
+  database: prismaAdapter(prisma, { provider: env.DATABASE_PROVIDER }),
   emailAndPassword: { enabled: true },
   plugins: [openAPI()],
   trustedOrigins: ["http://localhost:3000"],

@@ -9,7 +9,7 @@ This Next.js version may differ from what you know. Read the relevant guide in `
 
 ## Rules
 
-- Get all data from Express through the `/api/*` rewrite. The web app never touches the database.
+- Get all data from the NestJS API through the `/api/*` rewrite. The web app never touches the database.
 - Call the API with same-origin paths, so the better-auth session cookie works without CORS.
 - Import schemas and types from `@focuslog/shared`. Add it to `apps/web/package.json` when first needed.
 
@@ -22,7 +22,7 @@ This Next.js version may differ from what you know. Read the relevant guide in `
 
 ## Timer UI
 
-- The server owns timer state. Read it from `GET /sessions/current` and change it through the `/sessions` routes.
+- The server owns timer state. Read it from `GET /api/sessions/current` and change it through the `/api/sessions` routes.
 - Derive the remaining time from `plannedEndAt`. Don't run an independent client-side countdown as the source of truth.
 - A session can start without a tracker.
 - When starting a timer, offer a device picker with all devices as the default. Send `deviceIds` only if the user narrowed the choice.

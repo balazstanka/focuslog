@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     agentFeedback: true,
+    agentUpgrade: "security",
   },
   transpilePackages: ["@focuslog/shared"],
   cacheComponents: true,

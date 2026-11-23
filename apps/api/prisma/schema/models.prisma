@@ -1,15 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// datasource.prisma is written by prisma.config.ts from DATABASE_PROVIDER.
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
-}
-
-datasource db {
-  provider = "sqlite"
+  output   = "../../src/generated/prisma"
 }
 
 model User {

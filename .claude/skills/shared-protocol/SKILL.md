@@ -38,17 +38,17 @@ export type Activity = z.infer<typeof ActivitySchema>;
 
 The client generates `id`. It makes uploads idempotent.
 
-## Handshake: `POST /tracker/handshake`
+## Handshake: `POST /api/tracker/handshake`
 
 - Request body: `{ protocolVersion, deviceName, platform }`, with the API key in a header.
 - Response: `{ deviceId, serverTime, session }`.
 
-## Heartbeat: `POST /tracker/heartbeat`
+## Heartbeat: `POST /api/tracker/heartbeat`
 
 - Response: `{ serverTime, session: null | { id, status, startedAt, plannedEndAt } }`.
 - `session` is also `null` when the active session does not include this device. The same applies to the handshake response.
 
-## Starting a session: `POST /sessions`
+## Starting a session: `POST /api/sessions`
 
 - Request body: `{ deviceIds?: string[] }`, plus the timer's duration.
 - Without `deviceIds`, all of the user's devices record.
