@@ -31,7 +31,10 @@ There is no test runner yet.
 - When starting a timer, the user can pick which devices record. If they pick none, all their devices record.
 - Window titles are not filtered or excluded yet.
 - The pause button keeps the same session. No activity from a paused period may be stored; the server enforces this on upload.
-- A finished work block ends its session. The break after it has no session, and the next block is a new session. Grouping blocks comes later.
+- Work blocks and breaks are both sessions, told apart by `kind` (`work | break`), so the day's timeline can be shown later. Every block is its own session; grouping blocks comes later.
+- The web app starts the break when a work block finishes; the server never starts one on its own. Short and long breaks differ only in duration.
+- Trackers record only during a `work` session. During a break the server tells them there is no session, and it rejects activity uploaded for a break.
+- A "day" depends on the user's time zone, so clients send day boundaries as epoch milliseconds. The server knows no time zones.
 - The server owns timer state. The web app and the tracker both read it from there.
 - A session can run without a tracker; it then has no activity.
 - Prisma on SQLite or Postgres, chosen by `DATABASE_PROVIDER` in `apps/api/.env`. Each provider has its own migrations. Avoid solutions specific to one database.
@@ -41,15 +44,15 @@ There is no test runner yet.
 
 ## Implementation order
 
-1. Shared Zod schemas: activity, batch, handshake, heartbeat, session. _Not done: `packages/shared` still has the old `WindowSample` schemas._
-2. Prisma + SQLite, schema, first migration. _Partly done: only the better-auth tables exist._
+1. Shared Zod schemas: activity, batch, handshake, heartbeat, session. _Partly done: the session schemas exist; activity, batch, handshake and heartbeat are missing, and the old `WindowSample` schemas are still there._
+2. Prisma + SQLite, schema, first migration. _Partly done: better-auth tables, `FocusSession` and `SessionPause` exist; `Device`, `FocusSessionDevice` and `Activity` are missing._
 3. better-auth in the API, Next.js proxy, login page, Swagger. _Done._
-4. FocusSession and SessionPause API, timer UI.
+4. FocusSession and SessionPause API with work and break sessions, a date-range query for the day timeline, timer UI. _Partly done: the API is done; the timer UI and the day timeline UI are missing._
 5. Per-device API keys and device management on the web, tracker handshake.
 6. Heartbeat polling; the tracker starts and stops from session state.
 7. Segment merging, idempotent upload, offline buffer, clock skew correction.
 
-Later: device flow, WebSocket push, MySQL, roles and permissions, statistics page.
+Later: device flow, WebSocket push, MySQL, roles and permissions, statistics page (it builds on the date-range query from step 4).
 
 ## Skills
 
@@ -86,3 +89,4 @@ Load the matching skill before working in its area:
 - No `any`; narrow `unknown` instead.
 - Derive protocol types with `z.infer`; don't hand-write duplicates.
 - Validate every external input at the boundary with a shared Zod schema.
+- Import local files without an extension (`./sessions.service`, not `./sessions.service.js`).

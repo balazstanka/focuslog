@@ -9,5 +9,5 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: env.DATABASE_PROVIDER }),
   emailAndPassword: { enabled: true },
   plugins: [openAPI()],
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [env.WEB_ORIGIN],
 });

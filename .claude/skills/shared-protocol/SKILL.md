@@ -46,15 +46,20 @@ The client generates `id`. It makes uploads idempotent.
 ## Heartbeat: `POST /api/tracker/heartbeat`
 
 - Response: `{ serverTime, session: null | { id, status, startedAt, plannedEndAt } }`.
-- `session` is also `null` when the active session does not include this device. The same applies to the handshake response.
+- `session` is also `null` when the active session is a `break` or does not include this device. The same applies to the handshake response. The tracker therefore never needs to know about `kind`.
 
-## Starting a session: `POST /api/sessions`
+## Sessions
 
-- Request body: `{ deviceIds?: string[] }`, plus the timer's duration.
-- Without `deviceIds`, all of the user's devices record.
+`StartSessionRequestSchema`, `SessionRangeQuerySchema`, `FocusSessionSchema`, `CurrentSessionResponseSchema` and `SessionListResponseSchema` in `packages/shared/src/index.ts`.
+
+- `POST /api/sessions` request body: `{ kind, durationMs }`. `kind` is `work | break` and is required; `durationMs` is from 1 minute to 4 hours. Step 5 adds an optional `deviceIds?: string[]`. Without `deviceIds`, all of the user's devices record.
+- A session in a response: `{ id, kind, status, startedAt, plannedEndAt, endedAt: number | null, pauses: { startedAt, endedAt: number | null }[] }`. A pause with `endedAt: null` is still open.
+- `GET /api/sessions?from&to` takes epoch milliseconds. Query strings are text, so `SessionRangeQuerySchema` coerces them to numbers. `to` must be after `from`, and the range is at most 31 days.
+- `GET /api/sessions/current` answers `{ session: FocusSession | null }`. Like the heartbeat, "no session" is `null` inside a wrapper, not a 404.
 
 The API identifies a tracker from its API key, so tracker requests never carry a `deviceId`.
 
-## Session status
+## Session status and kind
 
-`running | paused | finished | cancelled`
+- Status: `running | paused | finished | cancelled`
+- Kind: `work | break`

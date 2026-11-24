@@ -53,16 +53,22 @@ For database rules, load `prisma-database`.
 
 ## Timer
 
-The server is the source of truth for timer state. A session can start without a tracker.
+The server is the source of truth for timer state. A session can start without a tracker. The logic is in `sessions/sessions.service.ts`.
 
-| Route                           | Behavior                                                                                                                                                     |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `POST /api/sessions`            | Start a session. A user can have only one `running` or `paused` session. Optional `deviceIds` must all belong to the user; without them, all devices record. |
-| `POST /api/sessions/:id/pause`  | Set status to `paused` and open a `SessionPause`.                                                                                                            |
-| `POST /api/sessions/:id/resume` | Close the pause and move `plannedEndAt` later by the pause length.                                                                                           |
-| `POST /api/sessions/:id/stop`   | End the session.                                                                                                                                             |
-| `GET /api/sessions/current`     | Return the active session.                                                                                                                                   |
-| `GET /api/sessions`             | List the user's past sessions.                                                                                                                               |
+| Route                           | Behavior                                                                                                                                                                                                                            |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/sessions`            | Start a session from `{ kind, durationMs }`. A user can have only one `running` or `paused` session of either kind; otherwise 409. From step 5, optional `deviceIds` must all belong to the user; without them, all devices record. |
+| `POST /api/sessions/:id/pause`  | Only from `running`. Set status to `paused` and open a `SessionPause`.                                                                                                                                                              |
+| `POST /api/sessions/:id/resume` | Only from `paused`. Close the pause and move `plannedEndAt` later by the pause length.                                                                                                                                              |
+| `POST /api/sessions/:id/stop`   | Only from `running` or `paused`. Set status to `cancelled` and `endedAt` to now, and close an open pause.                                                                                                                           |
+| `GET /api/sessions/current`     | Return `{ session }`, which is `null` when the user has no active session.                                                                                                                                                          |
+| `GET /api/sessions?from&to`     | Return `{ sessions }`: every session of both kinds, the active one included, that overlaps `[from, to)`, oldest first. The range is at most 31 days.                                                                                |
+
+- A session overlaps the range when `startedAt < to` and its `endedAt` is after `from` or still `null`. A block that crosses midnight shows up on both days.
+- `work` and `break` sessions share the whole lifecycle: pause, resume, stop and expiry work the same way.
+- No background job ends sessions. Before every read or write, the service sets an expired `running` session (`now >= plannedEndAt`) to `finished`, with `endedAt = plannedEndAt`. A paused session never expires, because resume moves `plannedEndAt`.
+- A session that doesn't exist or belongs to another user is 404. A transition from the wrong status is 409.
+- Run each operation in one `$transaction`. For the database rules behind this, load `prisma-database`.
 
 ## Devices
 
@@ -85,16 +91,16 @@ The first version uses the better-auth `apiKey` plugin. The user generates a key
 
 - Authenticate with the API key from the header.
 - If `protocolVersion` differs from `PROTOCOL_VERSION`, answer 426 with a message telling the tracker to update.
-- Otherwise answer `{ deviceId, serverTime, session }`. `session` is `null` if the active session does not include this device.
+- Otherwise answer `{ deviceId, serverTime, session }`. `session` is `null` if the active session is a `break` or does not include this device.
 
 ## `POST /api/tracker/heartbeat`
 
 - Update `Device.lastSeenAt`.
-- Answer `{ serverTime, session: null | { id, status, startedAt, plannedEndAt } }`. `session` is `null` if the active session does not include this device.
+- Answer `{ serverTime, session: null | { id, status, startedAt, plannedEndAt } }`. `session` is `null` if the active session is a `break` or does not include this device.
 
 ## Activity upload: `POST /api/tracker/activities`
 
-- Reject the batch if the session does not include this device.
+- Reject the batch if the session is a `break` or does not include this device.
 - Skip ids that already exist, so a resend is safe.
 - Trim every activity to the session's time window and remove the time inside any `SessionPause`. This is mandatory: a tracker can keep recording until its next heartbeat, and an offline tracker doesn't know about the pause at all.
 - Drop an activity that falls entirely inside a pause or outside the session.

@@ -24,7 +24,7 @@ Call `POST /api/tracker/heartbeat` every 10–15 seconds. The `session` in the r
 | `paused`                        | Close the current segment and stop recording.        |
 | `null`, `finished`, `cancelled` | Close the current segment, upload the rest and stop. |
 
-`null` also means the active session does not include this device.
+`null` also means the active session is a break or does not include this device. The server hides breaks this way, so the tracker never checks a session's `kind`.
 
 After a pause, a `running` response starts a new segment with a new UUID.
 

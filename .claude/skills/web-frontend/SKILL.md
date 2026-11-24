@@ -26,6 +26,14 @@ This Next.js version may differ from what you know. Read the relevant guide in `
 - Derive the remaining time from `plannedEndAt`. Don't run an independent client-side countdown as the source of truth.
 - A session can start without a tracker.
 - When starting a timer, offer a device picker with all devices as the default. Send `deviceIds` only if the user narrowed the choice.
+- A work block and a break are both sessions; start them with `POST /api/sessions { kind, durationMs }`. When a `work` session ends, offer to start a break with one click (default 5 minutes, configurable). The server never starts a break on its own. Short and long breaks differ only in `durationMs`.
+- Show which kind is running, because the same timer counts down both.
+
+## Day timeline
+
+- Compute the user's local day boundaries and send them as epoch milliseconds: `GET /api/sessions?from=<local midnight>&to=<next local midnight>`. A range can cover up to 31 days, for a week or month view.
+- Draw the timeline from the returned sessions: `work` and `break` blocks in order, with their `pauses`. Clip a block that crosses midnight to the day's boundaries.
+- Focused time of a block is `(endedAt ?? now) - startedAt` minus its pauses (an open pause counts until now).
 
 ## Devices
 
